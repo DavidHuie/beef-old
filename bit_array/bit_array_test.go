@@ -34,16 +34,7 @@ func TestNewBitArray(t *testing.T) {
 
 	}
 }
-
-func TestSet(t *testing.T) {
-	ba := New(70)
-	ba.Set(70)
-	if ba.data[1] != 64 {
-		t.Errorf("Integer set to %v, should be %v", ba.data[1], 1)
-	}
-}
-
-func TestGet(t *testing.T) {
+func TestSetGet(t *testing.T) {
 	ba := New(70)
 	if ba.Get(70) != uint64(0) {
 		t.Errorf("Entry at position %v should not be filled", 70)
