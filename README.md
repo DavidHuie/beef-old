@@ -17,4 +17,7 @@ insert KEY VALUE
 
 check KEY VALUE
 # Returns 1 or 0
+
+write KEY
+# Persists the bloom filter to disk
 ```
