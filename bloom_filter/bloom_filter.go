@@ -18,13 +18,13 @@ func New(size uint64, hashes uint) *BloomFilter {
 }
 
 func (b *BloomFilter) Insert(value string) {
-	for _, value := range hash_values(value, b.hashes) {
+	for _, value := range b.hash_values(value) {
 		b.bit_array.Set(value)
 	}
 }
 
 func (b *BloomFilter) Check(value string) bool {
-	for _, value := range hash_values(value, b.hashes) {
+	for _, value := range b.hash_values(value) {
 		check := b.bit_array.Get(value)
 		if check != bit_array.BIT {
 			return false
@@ -33,10 +33,11 @@ func (b *BloomFilter) Check(value string) bool {
 	return true
 }
 
-func hash_values(value string, hashes uint) []uint64 {
+func (b *BloomFilter) hash_values(value string) []uint64 {
 	values := make([]uint64, 0)
-	for i := uint(0); i < hashes; i++ {
-		values = append(values, string_hash.Hash(value, i))
+	for i := uint(0); i < b.hashes; i++ {
+		values = append(values,
+			string_hash.Hash(value, i)%b.bit_array.Size)
 	}
 	return values
 }
