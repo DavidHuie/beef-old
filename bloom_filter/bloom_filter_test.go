@@ -2,7 +2,7 @@ package bloom_filter
 
 import "testing"
 
-var test_hash_values = []uint64{1348, 9754, 3048, 4528}
+var test_hash_values = []uint64{1348, 9754, 3048, 160}
 var test_string = "test string"
 
 func TestHashValues(t *testing.T) {

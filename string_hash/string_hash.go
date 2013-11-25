@@ -17,10 +17,9 @@ func Hash(str string, hash_number uint) uint64 {
 		hash.Write([]byte(str))
 		return hash.Sum64()
 	} else {
-		hash := Hash(str, 0)
+		hash := PRIME * Hash(str, 0)
 		for i := uint(1); i < hash_number; i++ {
-			partial_hash := Hash(str, i)
-			hash *= PRIME * partial_hash
+			hash *= Hash(str, i)
 		}
 		return hash
 	}
