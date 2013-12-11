@@ -1,15 +1,18 @@
 package main
 
 import (
-	"errors"
+	"fmt"
 	"github.com/DavidHuie/beef/bloom_filter"
-	zmq "github.com/DavidHuie/beef/vendor/go-zmq"
-	"regexp"
-	"strconv"
 )
 
-const BIT_ARRAY_FACTOR = 12
-const NUM_HASHES = 3
+const (
+	// The size of an underlying bit array
+	// is this number times the expected size.
+	bit_array_factor = 12
+	// The number of hash functions use in
+	// new bloom filters.
+	num_hashes = 3
+)
 
 type beef_server struct {
 	bit_arrays map[string]*bloom_filter.BloomFilter
@@ -17,11 +20,12 @@ type beef_server struct {
 
 func New() *beef_server {
 	bs := new(beef_server)
+	bs.bit_arrays = make(map[string]*bloom_filter.BloomFilter)
 	return bs
 }
 
 func (b *beef_server) CreateBF(name string, size uint64) {
-	b.bit_arrays[name] = bloom_filter.New(size, NUM_HASHES)
+	b.bit_arrays[name] = bloom_filter.New(size*bit_array_factor, num_hashes)
 }
 
 func (b *beef_server) DeleteBF(name string) {
@@ -36,81 +40,12 @@ func (b *beef_server) CheckBF(name string, value string) bool {
 	return b.bit_arrays[name].Check(value)
 }
 
-type response struct {
-	successful   bool
-	return_value string
-}
-
-func successful_response(value string) *response {
-	response := new(response)
-	response.successful = true
-	response.return_value = value
-	return response
-}
-
-var create_regex = regexp.MustCompile(`create (\w+) (\d+)`)
-var delete_regex = regexp.MustCompile(`delete (\w+)`)
-var insert_regex = regexp.MustCompile(`insert (\w+) (.*)`)
-var check_regex = regexp.MustCompile(`check (\w+) (.*)`)
-
-func (b *beef_server) ParseAndExecuteCommand(unparsed_command string) (*response, error) {
-	if tokens := create_regex.FindStringSubmatch(unparsed_command); len(tokens[0]) > 1 {
-		size, _ := strconv.Atoi(tokens[2])
-		b.CreateBF(tokens[1], uint64(size))
-		return successful_response("ok"), nil
-	} else if tokens := delete_regex.FindStringSubmatch(unparsed_command); len(tokens[0]) > 1 {
-		b.DeleteBF(tokens[1])
-		return successful_response("ok"), nil
-	} else if tokens := insert_regex.FindStringSubmatch(unparsed_command); len(tokens[0]) > 1 {
-		b.InsertBF(tokens[1], tokens[2])
-		return successful_response("ok"), nil
-	} else if tokens := check_regex.FindStringSubmatch(unparsed_command); len(tokens[0]) > 1 {
-		value := b.CheckBF(tokens[1], tokens[2])
-		if value {
-			return successful_response("true"), nil
-		} else {
-			return successful_response("false"), nil
-		}
-	} else {
-		return nil, errors.New("Unrecognized command")
-	}
-}
-
 func main() {
-	server := new(beef_server)
-
-	// Create ZMQ context
-	ctx, err := zmq.NewContext()
-	if err != nil {
-		panic(err)
-	}
-	defer ctx.Close()
-
-	// Create ZMQ socket
-	sock, err := ctx.Socket(zmq.Rep)
-	if err != nil {
-		panic(err)
-	}
-	defer sock.Close()
-
-	// Bind to port
-	if err = sock.Bind("tcp://*:5555"); err != nil {
-		panic(err)
-	}
-
-	for {
-		parts, err := sock.Recv()
-		if err != nil {
-			panic(err)
-		}
-
-		request := parts[0]
-		response, _ := server.ParseAndExecuteCommand(string(request))
-
-		if err = sock.Send([][]byte{
-			[]byte(response.return_value),
-		}); err != nil {
-			panic(err)
-		}
-	}
+	server := New()
+	server.CreateBF("hallo", 40000000000)
+	server.CreateBF("vassap", 40000000000)
+	fmt.Println(server.CheckBF("hallo", "a test"))
+	server.InsertBF("hallo", "a test")
+	fmt.Println(server.CheckBF("hallo", "a test"))
+	fmt.Println(server)
 }
