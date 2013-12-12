@@ -1,7 +1,9 @@
 package beef
 
-const BIT uint64 = 1
-const INT_SIZE uint64 = 64
+const (
+	BIT      uint64 = 1
+	INT_SIZE uint64 = 64
+)
 
 type BitArray struct {
 	Size uint64
