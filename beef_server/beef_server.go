@@ -93,7 +93,7 @@ func exists_handler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Printf(
-		"Checked existence of bloom filter with name %v, %v\n",
+		"Checked for existence of bloom filter with name %v, %v\n",
 		name_values[0],
 		value,
 	)
@@ -148,7 +148,7 @@ func check_handler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Printf(
-		"Check for existence of %v in bloom filter %v, %v\n",
+		"Checked for existence of %v in bloom filter %v, %v\n",
 		value_values[0],
 		name_values[0],
 		value,
