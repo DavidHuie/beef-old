@@ -1,4 +1,4 @@
-package string_hash
+package beef
 
 import "testing"
 

@@ -1,6 +1,0 @@
-[submodule "vendor/go-zmq"]
-	path = vendor/go-zmq
-	url = git@github.com:vaughan0/go-zmq.git
-[submodule "vendor/go_codecs"]
-	path = vendor/go_codecs
-	url = git@github.com:ugorji/go.git

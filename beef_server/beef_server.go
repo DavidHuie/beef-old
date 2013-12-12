@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/DavidHuie/beef/bloom_filter"
+	"github.com/DavidHuie/beef"
 )
 
 const (
@@ -15,17 +15,17 @@ const (
 )
 
 type beef_server struct {
-	bit_arrays map[string]*bloom_filter.BloomFilter
+	bit_arrays map[string]*beef.BloomFilter
 }
 
 func New() *beef_server {
 	bs := new(beef_server)
-	bs.bit_arrays = make(map[string]*bloom_filter.BloomFilter)
+	bs.bit_arrays = make(map[string]*beef.BloomFilter)
 	return bs
 }
 
 func (b *beef_server) CreateBF(name string, size uint64) {
-	b.bit_arrays[name] = bloom_filter.New(size*bit_array_factor, num_hashes)
+	b.bit_arrays[name] = beef.NewBloomFilter(size*bit_array_factor, num_hashes)
 }
 
 func (b *beef_server) DeleteBF(name string) {

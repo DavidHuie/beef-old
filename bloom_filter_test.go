@@ -1,4 +1,4 @@
-package bloom_filter
+package beef
 
 import "testing"
 
@@ -6,7 +6,7 @@ var test_hash_values = []uint64{1348, 9754, 3048, 160}
 var test_string = "test string"
 
 func TestHashValues(t *testing.T) {
-	bf := New(10000, 4)
+	bf := NewBloomFilter(10000, 4)
 	result := bf.hash_values(test_string)
 	for i, value := range result {
 		if test_hash_values[i] != value {
@@ -17,7 +17,7 @@ func TestHashValues(t *testing.T) {
 }
 
 func TestInsertAndCheck(t *testing.T) {
-	bf := New(1000, 3)
+	bf := NewBloomFilter(1000, 3)
 	if bf.Check(test_string) {
 		t.Errorf("%v should not be initially set", test_string)
 	}

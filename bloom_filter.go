@@ -1,18 +1,13 @@
-package bloom_filter
-
-import (
-	"github.com/DavidHuie/beef/bit_array"
-	"github.com/DavidHuie/beef/string_hash"
-)
+package beef
 
 type BloomFilter struct {
-	bit_array *bit_array.BitArray
+	bit_array *BitArray
 	hashes    uint
 }
 
-func New(size uint64, hashes uint) *BloomFilter {
+func NewBloomFilter(size uint64, hashes uint) *BloomFilter {
 	bf := new(BloomFilter)
-	bf.bit_array = bit_array.New(size)
+	bf.bit_array = NewBitArray(size)
 	bf.hashes = hashes
 	return bf
 }
@@ -26,7 +21,7 @@ func (b *BloomFilter) Insert(value string) {
 func (b *BloomFilter) Check(value string) bool {
 	for _, value := range b.hash_values(value) {
 		check := b.bit_array.Get(value)
-		if check != bit_array.BIT {
+		if check != BIT {
 			return false
 		}
 	}
@@ -37,7 +32,7 @@ func (b *BloomFilter) hash_values(value string) []uint64 {
 	values := make([]uint64, 0)
 	for i := uint(0); i < b.hashes; i++ {
 		values = append(values,
-			string_hash.Hash(value, i)%b.bit_array.Size)
+			Hash(value, i)%b.bit_array.Size)
 	}
 	return values
 }

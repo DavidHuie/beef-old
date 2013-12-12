@@ -1,4 +1,4 @@
-package bit_array
+package beef
 
 const BIT uint64 = 1
 const INT_SIZE uint64 = 64
@@ -9,7 +9,7 @@ type BitArray struct {
 }
 
 // New takes in a size and outputs a pointer to a new BitArray.
-func New(size uint64) *BitArray {
+func NewBitArray(size uint64) *BitArray {
 	ba := new(BitArray)
 	ba.Size = size
 	ba.data = make([]uint64, (size/INT_SIZE)+1)
