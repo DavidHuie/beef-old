@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"github.com/DavidHuie/beef"
 	"net/http"
@@ -156,12 +157,37 @@ func check_handler(w http.ResponseWriter, r *http.Request) {
 
 var bf_manager = beef.NewManager()
 
-func main() {
+const (
+	default_port = 8080
+)
+
+func handle_http(port int, listen_on_all_interfaces bool) {
 	http.HandleFunc("/create", create_handler)
 	http.HandleFunc("/delete", delete_handler)
 	http.HandleFunc("/exists", exists_handler)
 	http.HandleFunc("/insert", insert_handler)
 	http.HandleFunc("/check", check_handler)
 
-	http.ListenAndServe(":8080", nil)
+	var interface_prefix string
+
+	if listen_on_all_interfaces {
+		interface_prefix = "0.0.0.0"
+	} else {
+		interface_prefix = ""
+	}
+
+	error := http.ListenAndServe(interface_prefix+":"+strconv.Itoa(port), nil)
+	if error != nil {
+		panic(error)
+	}
+}
+
+func main() {
+	var port int
+	var listen_on_all_interfaces bool
+	flag.IntVar(&port, "port", default_port, "Port to listen on")
+	flag.BoolVar(&listen_on_all_interfaces, "all", false, "Listen on all interfaces")
+	flag.Parse()
+
+	handle_http(port, listen_on_all_interfaces)
 }
