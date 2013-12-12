@@ -31,8 +31,7 @@ func (b *BloomFilter) Check(value string) bool {
 func (b *BloomFilter) hash_values(value string) []uint64 {
 	values := make([]uint64, 0)
 	for i := uint(0); i < b.hashes; i++ {
-		values = append(values,
-			Hash(value, i)%b.bit_array.Size)
+		values = append(values, Hash(value, i)%b.bit_array.Size)
 	}
 	return values
 }
